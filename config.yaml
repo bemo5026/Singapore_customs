@@ -1,0 +1,43 @@
+# Configuration of the Singapore customs extraction.
+# Full reference: docs/configuration.md
+
+# Months to extract, in YYYY-MM format. Use exactly ONE of the three forms below.
+months:
+  # 1. A range. "end" accepts a month or "latest" (the most recent month published).
+  start: "2015-01"
+  end: "2019-12"
+
+  # 2. An explicit list:
+  # list: ["2025-12", "2026-09"]
+
+  # 3. The N most recent months published (handy for a monthly refresh that also picks up
+  #    revisions of the previous months):
+  # last: 3
+
+# Tables to extract: value (T010001, thousand SGD) and/or quantity (T010002).
+tables: [value, quantity]
+
+# HS levels kept from the value table, any of 2, 4, 6, 8. The quantity table only has HS8.
+hs_levels: [8]
+
+# Keep the regional aggregates (WORLD, ASEAN, EUROPEAN UNION, ...) next to the countries.
+include_aggregate_partners: true
+
+# Also write output/merged/merged_YYYY-MM.csv: HS8 value and quantity side by side.
+# Requires both tables and HS level 8.
+merge: true
+
+# Output folder, relative to this file.
+output_dir: output
+
+# false: months already extracted are skipped, so an interrupted run resumes where it stopped.
+# true: re-download everything (use after a data revision or after changing the filters above).
+overwrite: false
+
+http:
+  timeout_seconds: 120
+  # Retries on network errors and HTTP 429/5xx, with exponential backoff.
+  max_retries: 5
+  retry_backoff_seconds: 5
+  # Pause between two pages of 5,000 rows, to be gentle with the API.
+  pause_seconds: 0.5
